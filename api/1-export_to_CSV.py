@@ -6,22 +6,19 @@ import requests
 from sys import argv
 
 if __name__ == "__main__":
+    api_url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(
+        api_url + "users/{}".format(argv[1])).json()
+    todos = requests.get(
+        api_url + "todos",
+        params={"userId": argv[1]}).json()
 
-    try:
-        emp_id = int(argv[1])
-    except Exception:
-        exit()
+    nameFile = str(eval(argv[1])) + ".csv"
 
-    emp_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{emp_id}").json()
-    todo_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{emp_id}/todos").json()
-
-    name = emp_response['username']
-    file_name = f"{emp_id}.csv"
-    with open(file_name, "w", encoding="utf-8") as file:
-        for task in todo_response:
-            task_completed = task.get('completed')
-            task_title = task.get('title')
-            file.write(
-                f'"{emp_id}","{name}","{task_completed}","{task_title}"\n')
+    f = open(nameFile, "x")
+    for task in todos:
+        s = '"' + str(user.get("id")) + '","' + str(
+            user.get("username")) + '","' + str(
+                task.get("completed")) + '","' + str(
+                    task.get("title")) + '"\n'
+        f.write(s)
