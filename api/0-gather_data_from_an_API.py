@@ -6,25 +6,29 @@ import requests
 from sys import argv
 
 if __name__ == "__main__":
-    employee_id = argv[1]
+
     completed_task = 0
     total_tasks = 0
-    completed_task_titles = []
+    employee_id = argv[1]
+    task_title = []
 
-    api_url = "https://jsonplaceholder.typicode.com/"
+    emp_response = requests.get(
+        f"https://jsonplaceholder.typicode.com/users/{employee_id}")
+    todo_response = requests.get(
+        f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos")
 
-    user = requests.get(api_url + f"users/{employee_id}").json()
-    todo_list = requests.get(api_url + f"users/{employee_id}/todos").json()
-
-    for task in todo_list:
-        if task.get("completed"):
+    for task in todo_response.json():
+        if task.get("completed") is True:
             completed_task += 1
-            completed_task_titles.append(task.get("title"))
-        total_tasks += 1
+            total_tasks += 1
+            task_title.append(task.get("title"))
+        else:
+            total_tasks += 1
 
-    name = user.get('name')
+    name = emp_response.json()["name"]
 
-    print("Employee {} is done with tasks({}/{}):".format(
-        name, completed_task, total_tasks))
-    for task_title in completed_task_titles:
-        print("\t {}".format(task_title))
+    print("Employee {} is done with tasks({}/{}):".
+          format(name, completed_task, total_tasks))
+
+    for task in task_title:
+        print("\t {}".format(task))
