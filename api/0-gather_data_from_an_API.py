@@ -6,33 +6,25 @@ import requests
 from sys import argv
 
 if __name__ == "__main__":
+    employee_id = argv[1]
+    completed_task = 0
+    total_tasks = 0
+    completed_task_titles = []
 
-    NUMBER_OF_DONE_TASKS = 0
-    TOTAL_NUMBER_OF_TASKS = 0
-    TASK_TITLE = []
+    api_url = "https://jsonplaceholder.typicode.com/"
 
-    try:
-        emp_id = int(argv[1])
-    except Exception:
-        exit()
+    user = requests.get(api_url + f"users/{employee_id}").json()
+    todo_list = requests.get(api_url + f"users/{employee_id}/todos").json()
 
-    emp_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{emp_id}")
-    todo_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{emp_id}/todos")
+    for task in todo_list:
+        if task.get("completed"):
+            completed_task += 1
+            completed_task_titles.append(task.get("title"))
+        total_tasks += 1
 
-    for task in todo_response.json():
-        if task.get("completed") is True:
-            NUMBER_OF_DONE_TASKS += 1
-            TOTAL_NUMBER_OF_TASKS += 1
-            TASK_TITLE.append(task.get("title"))
-        else:
-            TOTAL_NUMBER_OF_TASKS += 1
+    name = user.get('name')
 
-    EMPLOYEE_NAME = emp_response.json()["name"]
-
-    print("Employee {} is done with tasks({}/{}):".
-          format(EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
-
-    for task in TASK_TITLE:
-        print("\t {}".format(task))
+    print("Employee {} is done with tasks({}/{}):".format(
+        name, completed_task, total_tasks))
+    for task_title in completed_task_titles:
+        print("\t {}".format(task_title))
