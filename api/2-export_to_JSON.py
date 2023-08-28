@@ -7,21 +7,28 @@ import json
 import requests
 from sys import argv
 
-
 if __name__ == "__main__":
-    api_url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(
-        api_url + "users/{}".format(argv[1])).json()
-    todos = requests.get(
-        api_url + "todos",
-        params={"userId": argv[1]}).json()
 
-    dicti = {user.get("id"): [{"task": task.get("title"),
-                               "completed": task.get("completed"),
-                               "username": user.get(
-                                "username")} for task in todos]}
+    try:
+        emp_id = int(argv[1])
+    except Exception:
+        exit()
 
-    file_json = argv[1] + ".json"
-    with open(file_json, "w") as f:
+    emp_response = requests.get(
+        f'https://jsonplaceholder.typicode.com/users/{emp_id}').json()
+    todo_response = requests.get(
+        f'https://jsonplaceholder.typicode.com/users/{emp_id}/todos').json()
 
-        json.dump(dicti, f)
+    user_name = emp_response['username']
+    file_name = f"{emp_id}.json"
+
+    user_to_dict = {emp_id: []}
+    for task in todo_response:
+        user_to_dict[emp_id].append({
+            "task": task.get("title"),
+            "completed": task.get("completed"),
+            "username": user_name
+        })
+
+    with open(file_name, "w", encoding="utf-8") as file:
+        json.dump(user_to_dict, file, indent=4)
