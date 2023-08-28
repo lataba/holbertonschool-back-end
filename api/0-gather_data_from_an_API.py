@@ -7,28 +7,32 @@ from sys import argv
 
 if __name__ == "__main__":
 
-    completed_task = 0
-    total_tasks = 0
-    employee_id = argv[1]
-    task_title = []
+    NUMBER_OF_DONE_TASKS = 0
+    TOTAL_NUMBER_OF_TASKS = 0
+    TASK_TITLE = []
+
+    try:
+        emp_id = int(argv[1])
+    except Exception:
+        exit()
 
     emp_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{employee_id}")
+        f"https://jsonplaceholder.typicode.com/users/{emp_id}")
     todo_response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos")
+        f"https://jsonplaceholder.typicode.com/users/{emp_id}/todos")
 
     for task in todo_response.json():
         if task.get("completed") is True:
-            completed_task += 1
-            total_tasks += 1
-            task_title.append(task.get("title"))
+            NUMBER_OF_DONE_TASKS += 1
+            TOTAL_NUMBER_OF_TASKS += 1
+            TASK_TITLE.append(task.get("title"))
         else:
-            total_tasks += 1
+            TOTAL_NUMBER_OF_TASKS += 1
 
-    name = emp_response.json()["name"]
+    EMPLOYEE_NAME = emp_response.json()["name"]
 
     print("Employee {} is done with tasks({}/{}):".
-          format(name, completed_task, total_tasks))
+          format(EMPLOYEE_NAME, NUMBER_OF_DONE_TASKS, TOTAL_NUMBER_OF_TASKS))
 
-    for task in task_title:
+    for task in TASK_TITLE:
         print("\t {}".format(task))
