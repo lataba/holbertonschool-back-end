@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """
-Returns a list information for a given ID
+Returns information about his/her TODO list progress
 """
-
 import requests
 from sys import argv
 
@@ -10,15 +9,15 @@ if __name__ == "__main__":
     api_url = "https://jsonplaceholder.typicode.com/"
     user = requests.get(
         api_url + "users/{}".format(argv[1])).json()
-    todo_tasks = requests.get(
-        api_url + "todo_tasks",
-        params={"userId": sys.argv[1]}).json()
+    todos = requests.get(
+        api_url + "todos",
+        params={"userId": argv[1]}).json()
 
-    completed_task = []
-    for task in todo_tasks:
+    completed = []
+    for task in todos:
         if task.get("completed") is True:
-            completed_tasks.append(task.get("title"))
+            completed.append(task.get("title"))
     print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), len(completed_tasks), len(todo_tasks)))
-    for complete in completed_tasks:
+        user.get("name"), len(completed), len(todos)))
+    for complete in completed:
         print("\t {}".format(complete))
