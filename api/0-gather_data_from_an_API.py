@@ -14,15 +14,17 @@ if __name__ == "__main__":
     api_url = "https://jsonplaceholder.typicode.com/"
 
     user = requests.get(api_url + f"users/{employee_id}").json()
-    todos = requests.get(api_url + "todos", params={"userId": employee_id}).json()
+    todo_list = requests.get(api_url + f"users/{employee_id}/todos").json()
 
-    for task in todos:
+    for task in todo_list:
         if task.get("completed"):
             completed_task += 1
             completed_task_titles.append(task.get("title"))
         total_tasks += 1
 
+    name = user.get('name')
+
     print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), completed_task, total_tasks))
+        name, completed_task, total_tasks))
     for task_title in completed_task_titles:
         print("\t {}".format(task_title))
